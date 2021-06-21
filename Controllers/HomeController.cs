@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SportsORM.Models;
 
 
@@ -82,6 +83,44 @@ namespace SportsORM.Controllers
         [HttpGet("level_2")]
         public IActionResult Level2()
         {
+            ViewBag.AtlanticTeams = _context.Teams
+            .Include(team => team.CurrLeague)
+            .Where(team=> team.CurrLeague.Name == "Atlantic Soccer Conference")
+            .ToList();
+            ViewBag.Penguins = _context.Players
+            .Include(team => team.CurrentTeam)
+            .Where(player=> player.CurrentTeam.TeamName == "Penguins")
+            .ToList();
+            ViewBag.Collegiate = _context.Players
+            .Include(player => player.CurrentTeam)
+            .ThenInclude(team => team.CurrLeague)
+            .Where(player=> player.CurrentTeam.CurrLeague.Name == "International Collegiate Baseball Conference")
+            .ToList();
+            ViewBag.Lopez = _context.Players
+            .Include(player => player.CurrentTeam)
+            .ThenInclude(team => team.CurrLeague)
+            .Where(player=> player.CurrentTeam.CurrLeague.Name == "American Conference of Amateur Football") 
+            .Where(player=>player.LastName == "Lopez")
+            .ToList();
+            ViewBag.Football = _context.Players
+            .Include(player => player.CurrentTeam)
+            .ThenInclude(team => team.CurrLeague)
+            .Where(player=> player.CurrentTeam.CurrLeague.Sport == "Football") 
+            .ToList();
+            ViewBag.Sophia = _context.Players
+            .Include(player => player.CurrentTeam)
+            .Where(player=> player.FirstName == "Sophia") 
+            .ToList();
+            ViewBag.SophiaLeagues = _context.Players
+            .Include(player => player.CurrentTeam)
+            .ThenInclude(team => team.CurrLeague)
+            .Where(player=> player.FirstName == "Sophia") 
+            .ToList();
+            ViewBag.NoRoughRiders = _context.Players
+            .Include(player => player.CurrentTeam)
+            .ThenInclude(team => team.CurrLeague)
+            .Where(player=> player.LastName == "Flores" && player.CurrentTeam.TeamName != ("RoughRiders")) 
+            .ToList();
             return View();
         }
 
